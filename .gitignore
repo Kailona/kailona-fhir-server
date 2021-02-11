@@ -1,0 +1,9 @@
+*.DS_store
+.idea/
+
+pids
+*.pid
+*.seed
+*.pid.lock
+
+data

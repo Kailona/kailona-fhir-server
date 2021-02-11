@@ -1,0 +1,21 @@
+# Output
+build/
+data/
+
+# Dependencies
+node_modules/
+
+# Root
+README.md
+Dockerfile
+dockerfile
+docker-compose*
+
+# Misc. Config
+.git
+.DS_Store
+.gitignore
+.github/
+.netlify/
+.scripts/
+.idea/

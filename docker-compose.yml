@@ -1,0 +1,34 @@
+version: '3.2'
+
+services:
+  postgres:
+    restart: unless-stopped
+    image: postgres:12.1
+    hostname: postgres
+    container_name: kailona-fhir-server_db
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: fhirdb
+      POSTGRES_USER: fhirserver
+      POSTGRES_PASSWORD: change-password
+  fhir:
+    restart: unless-stopped
+    image: ibmcom/ibm-fhir-server:4.4.2
+    hostname: fhir
+    container_name: kailona-fhir-server
+    volumes:
+      - ./config:/opt/ol/wlp/usr/servers/fhir-server/config
+      - ./overrides:/tmp/overrides
+      - ./schema:/tmp/schema
+    environment:
+      INITIALIZE_DB: "true" # Set true only once to initialize database
+    command: bash -c "
+      cp /tmp/overrides/server.xml /opt/ol/wlp/usr/servers/fhir-server/server.xml &&
+      /tmp/schema/wait-for-it.sh postgres:5432 -- /tmp/schema/deploy.sh &&
+      /opt/ol/wlp/bin/server run fhir-server
+      "
+    ports:
+      - 9080:9080
+    depends_on:
+      - postgres
