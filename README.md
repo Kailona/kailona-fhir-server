@@ -4,6 +4,9 @@ This repository contains the scripts and config files to build and run [IBM® FH
 
 Refer to [here](https://docs.kailona.org) for the instructions to get started with Kailona.
 
+### Passwords
+Please change default passwords in `docker-compose.yml` and `overrides/dataSource.xml`.
+
 ### Data Folder
 
 Create an empty data folder:
