@@ -14,7 +14,7 @@ services:
       POSTGRES_PASSWORD: change-postgres-password
   fhir-schematool:
     restart: on-failure
-    image: ibmcom/ibm-fhir-schematool:4.7.0
+    image: ibmcom/ibm-fhir-schematool:4.9.2
     container_name: kailona-fhir-schematool
     environment:
       ENV_SKIP: "false" # Set to true if you want to manage postgres schema yourself (or once schema is initialized)
@@ -23,7 +23,7 @@ services:
       - postgres
   fhir:
     restart: unless-stopped
-    image: ibmcom/ibm-fhir-server:4.7.0
+    image: ibmcom/ibm-fhir-server:4.9.2
     hostname: fhir
     container_name: kailona-fhir-server
     volumes:
