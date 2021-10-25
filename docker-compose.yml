@@ -3,7 +3,7 @@ version: '3.2'
 services:
   postgres:
     restart: unless-stopped
-    image: postgres:12
+    image: postgres:14
     hostname: postgres
     container_name: kailona-fhir-server_db
     volumes:
