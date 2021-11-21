@@ -3,7 +3,7 @@ version: '3.2'
 services:
   postgres:
     restart: unless-stopped
-    image: postgres:12.1
+    image: postgres:14
     hostname: postgres
     container_name: kailona-fhir-server_db
     volumes:
@@ -11,23 +11,27 @@ services:
     environment:
       POSTGRES_DB: fhirdb
       POSTGRES_USER: fhirserver
-      POSTGRES_PASSWORD: change-password
+      POSTGRES_PASSWORD: change-postgres-password
+  fhir-schematool:
+    restart: on-failure
+    image: ibmcom/ibm-fhir-schematool:4.9.2
+    container_name: kailona-fhir-schematool
+    environment:
+      ENV_SKIP: "false" # Set to true if you want to manage postgres schema yourself (or once schema is initialized)
+    command: --tool.behavior=onboard --db.type=postgresql --db.host=postgres --db.port=5432 --db.database=fhirdb --sslConnection=false --grant.to=fhirserver --user=fhirserver --password=change-postgres-password
+    depends_on:
+      - postgres
   fhir:
     restart: unless-stopped
-    image: ibmcom/ibm-fhir-server:4.4.2
+    image: ibmcom/ibm-fhir-server:4.9.2
     hostname: fhir
     container_name: kailona-fhir-server
     volumes:
-      - ./config:/opt/ol/wlp/usr/servers/fhir-server/config
-      - ./overrides:/tmp/overrides
-      - ./schema:/tmp/schema
+      - ./config:/opt/ol/wlp/usr/servers/defaultServer/config
+      - ./overrides:/opt/ol/wlp/usr/servers/defaultServer/configDropins/overrides
     environment:
-      INITIALIZE_DB: "true" # Set true only once to initialize database
-    command: bash -c "
-      cp /tmp/overrides/server.xml /opt/ol/wlp/usr/servers/fhir-server/server.xml &&
-      /tmp/schema/wait-for-it.sh postgres:5432 -- /tmp/schema/deploy.sh &&
-      /opt/ol/wlp/bin/server run fhir-server
-      "
+      FHIR_USER_PASSWORD: change-user-password
+      FHIR_ADMIN_PASSWORD: change-admin-password
     ports:
       - 9080:9080
     depends_on:
